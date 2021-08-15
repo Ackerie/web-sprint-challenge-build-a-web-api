@@ -4,7 +4,7 @@ const router = express.Router()
 const Project = require('./projects-model')
 
 router.get('/', (req, res)=> {
-    Project.get(req.query)
+    Project.get()
            .then(project => {
                res.status(200).json(project)
            })
@@ -14,14 +14,15 @@ router.get('/', (req, res)=> {
 })
 
 
-router.get('./:id', (req, res)=> {
+router.get('/:id', (req, res)=> {
     const {id} = req.params
     Project.get(id)
            .then(project => {
                res.status(200).json(project)     
                   })
             .catch(err => {
-               res.status(404).json({ message: err.message})
+                console.log(err)
+               res.status(404).json({ message: "Error getting selected id"})
            })
 })
          
@@ -42,7 +43,7 @@ router.post('/', (req, res) => {
         res.status(201).json(post)
     })
     .catch(err => {
-        res.status(500).json(err)
+        res.status(400).json(err)
     })
 })
 
@@ -50,10 +51,10 @@ router.put('/:id', (req, res) => {
     const changes = req.body;
     Project.update(req.params.id, changes)
     .then(project => {
-        res.status(200).json(project)
+        res.status(400).json(project)
     })
     .catch(err=> {
-        res.status(500).json({ message: err.message })
+        res.status(400).json({ message: err.message })
     })
 })
 

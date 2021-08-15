@@ -4,7 +4,7 @@ const Action = require('./actions-model')
 const router = express.Router()
 
 router.get('/', (req,res)=>{
-    Action.get(req.query)
+    Action.get()
           .then(action =>{
                 res.status(200).json(action)
           })
@@ -21,7 +21,8 @@ router.get('/:id', (req, res) =>{
               res.status(200).json(action)
           })
           .catch(err => {
-              res.status(500).json({message:'There is no action wit hthe current id'})
+              console.log(err)
+              res.status(404).json({message:'There is no action wit hthe current id'})
           })
 })
 
@@ -32,7 +33,7 @@ router.post('/', (req,res) => {
           })
           .catch(err => {
               console.log(err)
-              res.status(500).json({message:err.message})
+              res.status(400).json({message:err.message})
           })
 })
 
@@ -45,22 +46,20 @@ router.put('/:id', async (req, res)=> {
               res.status(200).json(action)
           })
           .catch(err => {
-              res.status(500).json({message:err.message})
+              res.status(400).json({message:err.message})
           })
 
 })
 
 
-router.delete('/:id', async (req, res) => {
-    try{const id = res.params.id
-    const actionDelete = await Action.remove(id)
-    if(!actionDelete){
-        res.status(404).json({message:'Action not found'})
-    }else {
-        res.status(200).json(actionDelete)
-    }
-}catch(err){
-    res.status(500).json({message:"The action Could not be deleted "})
-}
+router.delete('/:id',  (req, res) => {
+
+    Action.remove(req.params.id)
+    .then(() => {
+        res.status(200).json({ message: "Delete complete" })
+    })
+    .catch(err => {
+        res.status(404).json({ message: err.message })
+    })
 })
 module.exports = router
